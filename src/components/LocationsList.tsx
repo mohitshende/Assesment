@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NetworkStatus, useQuery } from "@apollo/client";
 import { GET_LOCATIONS } from "../GraphQL/Queries";
 import "../styles/LocationsList.css";
+import Modal from "./Modal";
 
 const LocationsList = ({
   setLocationId,
@@ -17,6 +18,7 @@ const LocationsList = ({
 
   const [locations, setLocations] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -38,7 +40,7 @@ const LocationsList = ({
           <div className="header-top">
             <button onClick={() => refetch()}>Refresh</button>
             <h4>Locations</h4>
-            <button>Add Location</button>
+            <button onClick={() => setIsModalOpen(true)}>Add Location</button>
           </div>
           <input
             className="search-input"
@@ -92,6 +94,7 @@ const LocationsList = ({
           </div>
         )}
       </div>
+      <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </div>
   );
 };
