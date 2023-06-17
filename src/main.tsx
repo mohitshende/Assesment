@@ -1,10 +1,31 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import "./styles/index.css";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+
+const httpLink = createHttpLink({
+  uri: "https://graph.dev.jit.care/graphql",
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = import.meta.env.VITE_AUTH_TOKEN;
+
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
 
 const client = new ApolloClient({
-  uri: "https://graphqlzero.almansi.me/api",
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
