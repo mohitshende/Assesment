@@ -17,11 +17,19 @@ const PaginateComponent = ({
 
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <button onClick={handlePreviousPage} disabled={pageNumber === 1}>
+      <button
+        onClick={handlePreviousPage}
+        disabled={pageNumber === 1}
+        style={{ padding: "5px 30px" }}
+      >
         Previous Page
       </button>
       <span>Current Page: {pageNumber}</span>
-      <button onClick={handleNextPage} disabled={pageNumber === totalPages}>
+      <button
+        onClick={handleNextPage}
+        disabled={pageNumber === totalPages}
+        style={{ padding: "5px 30px" }}
+      >
         Next Page
       </button>
     </div>

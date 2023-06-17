@@ -39,9 +39,16 @@ const LocationsList = ({
       <div>
         <div className="header">
           <div className="header-top">
-            <button onClick={() => refetch()}>Refresh</button>
+            <button onClick={() => refetch()} style={{ padding: "5px 30px" }}>
+              Refresh
+            </button>
             <h4>Locations</h4>
-            <button onClick={() => setIsModalOpen(true)}>Add Location</button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              style={{ padding: "5px 30px" }}
+            >
+              Add Location
+            </button>
           </div>
           <input
             className="search-input"
@@ -66,7 +73,6 @@ const LocationsList = ({
           <div className="locations-container">
             {filterOptions()?.map((location) => {
               const date = new Date(location.updatedAt);
-
               return (
                 <div
                   key={location.id}

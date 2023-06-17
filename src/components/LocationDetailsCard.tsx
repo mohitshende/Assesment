@@ -69,6 +69,7 @@ const LocationDetailsCard = ({
             <button
               className="location-details-refresh"
               onClick={() => refetch()}
+              style={{ padding: "5px 20px" }}
             >
               Refresh
             </button>
@@ -85,6 +86,7 @@ const LocationDetailsCard = ({
                 })
               }
               disabled={isDeleting}
+              style={{ padding: "5px 20px" }}
             >
               Delete
             </button>
@@ -96,7 +98,6 @@ const LocationDetailsCard = ({
                 <InlineEditInput
                   refetch={refetch}
                   field={showEditInput.fieldName}
-                  setShowEditInput={setShowEditInput}
                   id={locationId}
                 />
               ) : (
@@ -108,6 +109,7 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
+                  style={{ padding: "5px 30px" }}
                 >
                   Edit
                 </button>
@@ -120,7 +122,6 @@ const LocationDetailsCard = ({
                 <InlineEditInput
                   refetch={refetch}
                   field={showEditInput.fieldName}
-                  setShowEditInput={setShowEditInput}
                   id={locationId}
                 />
               ) : (
@@ -132,6 +133,7 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
+                  style={{ padding: "5px 30px" }}
                 >
                   Edit
                 </button>
@@ -144,8 +146,8 @@ const LocationDetailsCard = ({
                 <InlineEditInput
                   refetch={refetch}
                   field={showEditInput.fieldName}
-                  setShowEditInput={setShowEditInput}
                   id={locationId}
+                  value={locationData?.resource?.status}
                 />
               ) : (
                 <button
@@ -156,6 +158,7 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
+                  style={{ padding: "5px 30px" }}
                 >
                   Edit
                 </button>
@@ -168,7 +171,6 @@ const LocationDetailsCard = ({
                 <InlineEditInput
                   refetch={refetch}
                   field={showEditInput.fieldName}
-                  setShowEditInput={setShowEditInput}
                   id={locationId}
                 />
               ) : (
@@ -180,6 +182,7 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
+                  style={{ padding: "5px 30px" }}
                 >
                   Edit
                 </button>
@@ -187,7 +190,12 @@ const LocationDetailsCard = ({
             </div>
           </div>
           <button
-            style={{ width: "100%", marginTop: "20px" }}
+            style={{
+              width: "100%",
+              marginTop: "20px",
+              padding: "10px",
+              cursor: "pointer",
+            }}
             onClick={() => setIsModalOpen(true)}
           >
             Edit Location

@@ -6,18 +6,12 @@ const InlineEditInput = ({
   refetch,
   id,
   field,
-  setShowEditInput,
+  value,
 }: {
   refetch: () => void;
   id: string;
   field: string;
-  setShowEditInput: ({
-    fieldName,
-    show,
-  }: {
-    fieldName: string;
-    show: boolean;
-  }) => void;
+  value?: string;
 }) => {
   const [payload, setPayload] = useState(null);
 
@@ -34,7 +28,7 @@ const InlineEditInput = ({
       patchLocation({
         variables: {
           locationPatchId: id,
-          requestBody: payload,
+          requestBody: { status: e.target.value },
           tenant: import.meta.env.VITE_TENANT,
         },
       });
@@ -45,11 +39,12 @@ const InlineEditInput = ({
   if (field == "status") {
     return (
       <select
+        style={{ padding: "5px 30px" }}
         name="status"
         placeholder="Select Status"
-        value={payload?.status}
         onChange={handleChange}
         disabled={loading}
+        value={value}
       >
         <option value="Active">Active</option>
         <option value="Inactive">Inactive</option>
@@ -58,6 +53,7 @@ const InlineEditInput = ({
   }
   return (
     <input
+      style={{ padding: "5px 30px" }}
       name={field}
       type="text"
       placeholder={`Enter ${field} name`}

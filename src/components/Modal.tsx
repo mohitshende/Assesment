@@ -112,6 +112,7 @@ const Modal = ({
               });
             }}
             disabled={loading}
+            style={{ padding: "5px 60px" }}
           >
             Create
           </button>

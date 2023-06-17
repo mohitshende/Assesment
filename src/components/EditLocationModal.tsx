@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/Modal.css";
 import { useMutation, useQuery } from "@apollo/client";
-import { CREATE_LOCATION, UPDATE_LOCATION } from "../GraphQL/Mutations";
+import { UPDATE_LOCATION } from "../GraphQL/Mutations";
 import { GET_LOCATIONS } from "../GraphQL/Queries";
 
 const EditLocationModal = ({
@@ -48,7 +48,7 @@ const EditLocationModal = ({
   }, [updateData]);
 
   useEffect(() => {
-    if (!isModalOpen) {
+    if (data) {
       setPayload({
         name: data.name,
         address: data.address,
@@ -75,7 +75,7 @@ const EditLocationModal = ({
         }}
       >
         <div className="fields">
-          <h2>Add new Location</h2>
+          <h2>Edit new Location</h2>
           {error?.message && <h5 style={{ color: "red" }}>Error!</h5>}
           <input
             name="name"
@@ -127,6 +127,7 @@ const EditLocationModal = ({
               });
             }}
             disabled={loading}
+            style={{ padding: "5px 60px" }}
           >
             Update
           </button>
