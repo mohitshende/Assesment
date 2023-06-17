@@ -74,6 +74,7 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
               <p>Address: {locationData?.resource?.address}</p>
               {showEditInput.fieldName == "address" ? (
                 <InlineEditInput
+                  refetch={refetch}
                   field={showEditInput.fieldName}
                   setShowEditInput={setShowEditInput}
                   id={locationId}
@@ -97,6 +98,7 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
               <p>NPI: {locationData?.resource?.npi}</p>
               {showEditInput.fieldName == "npi" ? (
                 <InlineEditInput
+                  refetch={refetch}
                   field={showEditInput.fieldName}
                   setShowEditInput={setShowEditInput}
                   id={locationId}
@@ -120,6 +122,7 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
               <p>Status: {locationData?.resource?.status}</p>
               {showEditInput.fieldName == "status" ? (
                 <InlineEditInput
+                  refetch={refetch}
                   field={showEditInput.fieldName}
                   setShowEditInput={setShowEditInput}
                   id={locationId}
@@ -143,6 +146,7 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
               <p>TaxId: {locationData?.resource?.taxId}</p>
               {showEditInput.fieldName == "taxId" ? (
                 <InlineEditInput
+                  refetch={refetch}
                   field={showEditInput.fieldName}
                   setShowEditInput={setShowEditInput}
                   id={locationId}

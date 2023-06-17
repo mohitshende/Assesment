@@ -15,3 +15,19 @@ export const DELETE_LOCATION = gql`
     }
   }
 `;
+
+export const PATCH_LOCATION = gql`
+  mutation LocationPatch(
+    $locationPatchId: String!
+    $requestBody: LocationPatchInput!
+    $tenant: String!
+  ) {
+    locationPatch(
+      id: $locationPatchId
+      requestBody: $requestBody
+      tenant: $tenant
+    ) {
+      resourceID
+    }
+  }
+`;
