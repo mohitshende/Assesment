@@ -1,7 +1,5 @@
-import React from "react";
-
-const LocationDetailsCard = () => {
-  return <div>LocationDetailsCard</div>;
+const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
+  return <div>{locationId}</div>;
 };
 
 export default LocationDetailsCard;
