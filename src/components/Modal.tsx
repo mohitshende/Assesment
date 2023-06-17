@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/Modal.css";
+import { useMutation } from "@apollo/client";
+import { CREATE_LOCATION } from "../GraphQL/Mutations";
 
 const Modal = ({
   isModalOpen,
   setIsModalOpen,
+  refetchList,
 }: {
   isModalOpen: boolean;
   setIsModalOpen: (arg: boolean) => void;
+  refetchList: () => void;
 }) => {
   const [payload, setPayload] = useState({
-    location: "",
+    name: "",
     address: "",
-    status: "Inactive",
+    status: "Active",
   });
 
   const handleChange = (e) => {
@@ -20,7 +24,26 @@ const Modal = ({
     setPayload({ ...payload, [e.target.name]: e.target.value });
   };
 
-  console.log(payload);
+  const [createLocation, { data, error, loading }] =
+    useMutation(CREATE_LOCATION);
+
+  useEffect(() => {
+    if (data?.locationCreate) {
+      setIsModalOpen(false);
+
+      refetchList();
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      setPayload({
+        name: "",
+        address: "",
+        status: "Active",
+      });
+    }
+  }, [isModalOpen]);
 
   return (
     <div
@@ -39,8 +62,9 @@ const Modal = ({
       >
         <div className="fields">
           <h2>Add new Location</h2>
+          {error?.message && <h5 style={{ color: "red" }}>Error!</h5>}
           <input
-            name="location"
+            name="name"
             type="text"
             placeholder="Enter location name"
             onChange={handleChange}
@@ -48,7 +72,7 @@ const Modal = ({
           <input
             name="address"
             type="text"
-            placeholder="Enter location name"
+            placeholder="Enter adress"
             onChange={handleChange}
           />
           <select
@@ -60,7 +84,19 @@ const Modal = ({
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
           </select>
-          {/* <button onClick={()=>} >Create</button> */}
+          <button
+            onClick={() => {
+              createLocation({
+                variables: {
+                  requestBody: payload,
+                  tenant: import.meta.env.VITE_TENANT,
+                },
+              });
+            }}
+            disabled={loading}
+          >
+            Create
+          </button>
         </div>
       </div>
     </div>

@@ -94,7 +94,11 @@ const LocationsList = ({
           </div>
         )}
       </div>
-      <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+      <Modal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        refetchList={refetch}
+      />
     </div>
   );
 };
