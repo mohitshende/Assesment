@@ -1,23 +1,33 @@
 import { useEffect, useState } from "react";
 import "../styles/Modal.css";
-import { useMutation } from "@apollo/client";
-import { CREATE_LOCATION } from "../GraphQL/Mutations";
+import { useMutation, useQuery } from "@apollo/client";
+import { CREATE_LOCATION, UPDATE_LOCATION } from "../GraphQL/Mutations";
+import { GET_LOCATIONS } from "../GraphQL/Queries";
 
-const Modal = ({
+const EditLocationModal = ({
+  data,
   isModalOpen,
   setIsModalOpen,
-  refetchList,
+  refetch,
 }: {
+  data: any;
   isModalOpen: boolean;
   setIsModalOpen: (arg: boolean) => void;
-  refetchList: () => void;
+  refetch: () => void;
 }) => {
   const [payload, setPayload] = useState({
     name: "",
     address: "",
-    status: "Active",
+    status: "",
     npi: "",
     taxId: "",
+  });
+
+  const tenant = import.meta.env.VITE_TENANT;
+
+  const { refetch: refetchLocations } = useQuery(GET_LOCATIONS, {
+    variables: { tenant, page: 1 },
+    notifyOnNetworkStatusChange: true,
   });
 
   const handleChange = (e) => {
@@ -26,28 +36,28 @@ const Modal = ({
     setPayload({ ...payload, [e.target.name]: e.target.value });
   };
 
-  const [createLocation, { data, error, loading }] =
-    useMutation(CREATE_LOCATION);
+  const [updateLocation, { data: updateData, error, loading }] =
+    useMutation(UPDATE_LOCATION);
 
   useEffect(() => {
-    if (data?.locationCreate) {
+    if (updateData?.locationUpdate) {
       setIsModalOpen(false);
-
-      refetchList();
+      refetchLocations();
+      refetch();
     }
-  }, [data]);
+  }, [updateData]);
 
   useEffect(() => {
     if (!isModalOpen) {
       setPayload({
-        name: "",
-        address: "",
-        status: "Active",
-        npi: "",
-        taxId: "",
+        name: data.name,
+        address: data.address,
+        status: data.status,
+        npi: data.npi,
+        taxId: data.taxId,
       });
     }
-  }, [isModalOpen]);
+  }, [data]);
 
   return (
     <div
@@ -72,12 +82,14 @@ const Modal = ({
             type="text"
             placeholder="Enter location name"
             onChange={handleChange}
+            value={payload?.name}
           />
           <input
             name="address"
             type="text"
             placeholder="Enter adress"
             onChange={handleChange}
+            value={payload?.address}
           />
 
           <input
@@ -85,12 +97,14 @@ const Modal = ({
             type="text"
             placeholder="Enter NPI"
             onChange={handleChange}
+            value={payload?.npi}
           />
           <input
             name="taxId"
             type="text"
             placeholder="Enter Tax ID"
             onChange={handleChange}
+            value={payload?.taxId}
           />
 
           <select
@@ -104,8 +118,9 @@ const Modal = ({
           </select>
           <button
             onClick={() => {
-              createLocation({
+              updateLocation({
                 variables: {
+                  locationUpdateId: data.id,
                   requestBody: payload,
                   tenant: import.meta.env.VITE_TENANT,
                 },
@@ -113,7 +128,7 @@ const Modal = ({
             }}
             disabled={loading}
           >
-            Create
+            Update
           </button>
         </div>
       </div>
@@ -121,4 +136,4 @@ const Modal = ({
   );
 };
 
-export default Modal;
+export default EditLocationModal;

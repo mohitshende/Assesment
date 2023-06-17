@@ -3,6 +3,7 @@ import { NetworkStatus, useQuery } from "@apollo/client";
 import { GET_LOCATIONS } from "../GraphQL/Queries";
 import "../styles/LocationsList.css";
 import Modal from "./Modal";
+import PaginateComponent from "./PaginateComponent";
 
 const LocationsList = ({
   setLocationId,
@@ -10,21 +11,21 @@ const LocationsList = ({
   setLocationId: (id: string) => void;
 }) => {
   const tenant = import.meta.env.VITE_TENANT;
-
-  const { loading, data, refetch, networkStatus } = useQuery(GET_LOCATIONS, {
-    variables: { tenant },
-    notifyOnNetworkStatusChange: true,
-  });
-
   const [locations, setLocations] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const { loading, data, refetch, networkStatus } = useQuery(GET_LOCATIONS, {
+    variables: { tenant, page: pageNumber },
+    notifyOnNetworkStatusChange: true,
+  });
 
   useEffect(() => {
     if (data) {
       setLocations(data.locationList.resources);
     }
-  }, [data]);
+  }, [data, pageNumber]);
 
   const filterOptions = () => {
     if (searchText.length > 0) {
@@ -79,7 +80,19 @@ const LocationsList = ({
                     <p>{location.address}</p>
                   </div>
                   <div className="location-card-details">
-                    <h5>{location.status}</h5>
+                    {location.status && (
+                      <h5
+                        style={{
+                          color: "white",
+                          background:
+                            location.status == "active" ? "green" : "red",
+                          padding: "4px",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        {location.status}
+                      </h5>
+                    )}
                     <p>
                       {date.toLocaleString("en-IN", {
                         hour: "numeric",
@@ -91,6 +104,12 @@ const LocationsList = ({
                 </div>
               );
             })}
+
+            <PaginateComponent
+              pageNumber={pageNumber}
+              setPageNumber={setPageNumber}
+              totalPages={data.locationList.pages}
+            />
           </div>
         )}
       </div>

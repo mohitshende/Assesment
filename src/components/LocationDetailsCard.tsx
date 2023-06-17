@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
-import { GET_LOCATION } from "../GraphQL/Queries";
+import { GET_LOCATION, GET_LOCATIONS } from "../GraphQL/Queries";
 import { NetworkStatus, useMutation, useQuery } from "@apollo/client";
 import "../styles/LocationDetailsCard.css";
 import { DELETE_LOCATION } from "../GraphQL/Mutations";
 import InlineEditInput from "./InlineEditInput";
+import EditLocationModal from "./EditLocationModal";
 
-const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
+const LocationDetailsCard = ({
+  locationId,
+  setLocationId,
+}: {
+  locationId: string;
+  setLocationId: (id: string) => void;
+}) => {
   const tenant = import.meta.env.VITE_TENANT;
   const [locationData, setLocationData] = useState(null);
   const [showEditInput, setShowEditInput] = useState({
@@ -13,12 +20,18 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
     show: false,
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { loading, data, refetch, networkStatus } = useQuery(GET_LOCATION, {
     variables: { locationReadId: locationId, tenant },
     notifyOnNetworkStatusChange: true,
   });
 
-  const [deleteLocation, { loading: isDeleting }] =
+  const { refetch: refetchLocations } = useQuery(GET_LOCATIONS, {
+    variables: { tenant },
+  });
+
+  const [deleteLocation, { data: deletedLocationData, loading: isDeleting }] =
     useMutation(DELETE_LOCATION);
 
   useEffect(() => {
@@ -30,6 +43,13 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
       });
     }
   }, [data]);
+
+  useEffect(() => {
+    if (deletedLocationData) {
+      refetchLocations();
+      setLocationId("");
+    }
+  }, [deletedLocationData]);
 
   if (!locationId) {
     return (
@@ -166,8 +186,20 @@ const LocationDetailsCard = ({ locationId }: { locationId: string }) => {
               )}
             </div>
           </div>
+          <button
+            style={{ width: "100%", marginTop: "20px" }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            Edit Location
+          </button>
         </>
       )}
+      <EditLocationModal
+        data={locationData?.resource}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        refetch={refetch}
+      />
     </div>
   );
 };

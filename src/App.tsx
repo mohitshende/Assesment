@@ -7,7 +7,10 @@ function App() {
 
   return (
     <div className="main">
-      <LocationDetailsCard locationId={locationId} />
+      <LocationDetailsCard
+        locationId={locationId}
+        setLocationId={setLocationId}
+      />
       <LocationsList setLocationId={setLocationId} />
     </div>
   );

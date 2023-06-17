@@ -31,3 +31,19 @@ export const PATCH_LOCATION = gql`
     }
   }
 `;
+
+export const UPDATE_LOCATION = gql`
+  mutation LocationUpdate(
+    $locationUpdateId: String!
+    $requestBody: LocationWriteInput!
+    $tenant: String!
+  ) {
+    locationUpdate(
+      id: $locationUpdateId
+      requestBody: $requestBody
+      tenant: $tenant
+    ) {
+      resourceID
+    }
+  }
+`;
