@@ -1,3 +1,6 @@
+import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { Button, Flex, Text } from "@chakra-ui/react";
+
 const PaginateComponent = ({
   pageNumber,
   setPageNumber,
@@ -16,23 +19,23 @@ const PaginateComponent = ({
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
-      <button
-        onClick={handlePreviousPage}
-        disabled={pageNumber === 1}
-        style={{ padding: "5px 30px" }}
-      >
-        Previous Page
-      </button>
-      <span>Current Page: {pageNumber}</span>
-      <button
-        onClick={handleNextPage}
-        disabled={pageNumber === totalPages}
-        style={{ padding: "5px 30px" }}
-      >
-        Next Page
-      </button>
-    </div>
+    <Flex
+      w={"100%"}
+      justifyContent={"space-around"}
+      alignItems={"center"}
+      position={"absolute"}
+      bottom={"0px"}
+      left={"0"}
+      mb={"20px"}
+    >
+      <Button onClick={handlePreviousPage} isDisabled={pageNumber === 1}>
+        <ArrowLeftIcon />
+      </Button>
+      <Text>Current Page: {pageNumber}</Text>
+      <Button onClick={handleNextPage} isDisabled={pageNumber === totalPages}>
+        <ArrowRightIcon />
+      </Button>
+    </Flex>
   );
 };
 

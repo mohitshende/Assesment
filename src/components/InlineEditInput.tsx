@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { PATCH_LOCATION } from "../GraphQL/Mutations";
+import { Input, Select } from "@chakra-ui/react";
 
 const InlineEditInput = ({
   refetch,
@@ -38,8 +39,8 @@ const InlineEditInput = ({
 
   if (field == "status") {
     return (
-      <select
-        style={{ padding: "5px 30px" }}
+      <Select
+        width={"50%"}
         name="status"
         placeholder="Select Status"
         onChange={handleChange}
@@ -48,17 +49,17 @@ const InlineEditInput = ({
       >
         <option value="Active">Active</option>
         <option value="Inactive">Inactive</option>
-      </select>
+      </Select>
     );
   }
   return (
-    <input
-      style={{ padding: "5px 30px" }}
+    <Input
+      width={"50%"}
       name={field}
       type="text"
-      placeholder={`Enter ${field} name`}
+      placeholder={`Enter ${field}`}
       onChange={handleChange}
-      disabled={loading}
+      isDisabled={loading}
       onKeyUp={(e) => {
         if (e.key == "Enter") {
           patchLocation({

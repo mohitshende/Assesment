@@ -8,6 +8,7 @@ import {
   createHttpLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const httpLink = createHttpLink({
   uri: "https://graph.dev.jit.care/graphql",
@@ -31,6 +32,8 @@ const client = new ApolloClient({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <ApolloProvider client={client}>
-    <App />
+    <ChakraProvider>
+      <App />
+    </ChakraProvider>
   </ApolloProvider>
 );

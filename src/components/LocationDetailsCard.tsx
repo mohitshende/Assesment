@@ -1,10 +1,37 @@
 import { useEffect, useState } from "react";
 import { GET_LOCATION, GET_LOCATIONS } from "../GraphQL/Queries";
 import { NetworkStatus, useMutation, useQuery } from "@apollo/client";
-import "../styles/LocationDetailsCard.css";
 import { DELETE_LOCATION } from "../GraphQL/Mutations";
 import InlineEditInput from "./InlineEditInput";
 import EditLocationModal from "./EditLocationModal";
+import {
+  Button,
+  Flex,
+  SkeletonText,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { DeleteIcon, EditIcon, RepeatIcon } from "@chakra-ui/icons";
+
+interface Resource {
+  address: string;
+  description: string;
+  id: string;
+  name: string;
+  npi: string;
+  status: string;
+  taxId: string;
+  tenant: string;
+}
+
+interface ILocationData {
+  id: string;
+  resource: Resource;
+}
+interface IShowEditData {
+  fieldName: string;
+  show: boolean;
+}
 
 const LocationDetailsCard = ({
   locationId,
@@ -14,13 +41,11 @@ const LocationDetailsCard = ({
   setLocationId: (id: string) => void;
 }) => {
   const tenant = import.meta.env.VITE_TENANT;
-  const [locationData, setLocationData] = useState(null);
-  const [showEditInput, setShowEditInput] = useState({
+  const [locationData, setLocationData] = useState<ILocationData>(null);
+  const [showEditInput, setShowEditInput] = useState<IShowEditData>({
     fieldName: "",
     show: false,
   });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { loading, data, refetch, networkStatus } = useQuery(GET_LOCATION, {
     variables: { locationReadId: locationId, tenant },
@@ -51,32 +76,59 @@ const LocationDetailsCard = ({
     }
   }, [deletedLocationData]);
 
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   if (!locationId) {
     return (
-      <div className="location-container">
-        Select location from the location list to view details
-      </div>
+      <Flex
+        boxShadow={"2xl"}
+        borderRadius={"4px"}
+        width={"40vw"}
+        padding={"10px"}
+        justifyContent={"center"}
+        pt={"50px"}
+        fontWeight={"bold"}
+        fontSize={"20px"}
+      >
+        Select location from the location list to view its details
+      </Flex>
     );
   }
 
   return (
-    <div className="location-container">
+    <Flex
+      boxShadow={"2xl"}
+      borderRadius={"4px"}
+      width={"40vw"}
+      padding={"10px"}
+    >
       {networkStatus === NetworkStatus.refetch || loading ? (
-        <p style={{ textAlign: "center" }}>Loading...</p>
+        <Flex h={"100%"} w={"100%"} p={"20px"}>
+          <SkeletonText
+            width={"100%"}
+            mt="4"
+            noOfLines={8}
+            spacing="20px"
+            skeletonHeight="20px"
+          />
+        </Flex>
       ) : (
-        <>
-          <div className="location-details-header">
-            <button
-              className="location-details-refresh"
-              onClick={() => refetch()}
-              style={{ padding: "5px 20px" }}
-            >
-              Refresh
-            </button>
-            <h3>{locationData?.resource?.name}</h3>
+        <Flex w={"100%"} direction={"column"} padding={"20px"} gap={"20px"}>
+          <Flex
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            pt={"20px"}
+            gap={"10px"}
+          >
+            <Button onClick={() => refetch()} isLoading={loading}>
+              <RepeatIcon />
+            </Button>
+            <Text fontWeight={"bold"} fontSize={"25px"}>
+              {locationData?.resource?.name}
+            </Text>
 
-            <button
-              className="location-details-refresh"
+            <Button
+              isLoading={isDeleting}
               onClick={() =>
                 deleteLocation({
                   variables: {
@@ -85,15 +137,23 @@ const LocationDetailsCard = ({
                   },
                 })
               }
-              disabled={isDeleting}
-              style={{ padding: "5px 20px" }}
+              colorScheme="red"
+              variant={"solid"}
             >
-              Delete
-            </button>
-          </div>
-          <div className="location-details">
-            <div className="edit-detail">
-              <p>Address: {locationData?.resource?.address}</p>
+              <DeleteIcon />
+            </Button>
+          </Flex>
+          <Flex
+            direction={"column"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            pt={"20px"}
+            gap={"10px"}
+          >
+            <Flex justifyContent={"space-between"} w={"100%"}>
+              <Text fontWeight={"bold"}>
+                Address: {locationData?.resource?.address}
+              </Text>
               {showEditInput.fieldName == "address" ? (
                 <InlineEditInput
                   refetch={refetch}
@@ -101,7 +161,7 @@ const LocationDetailsCard = ({
                   id={locationId}
                 />
               ) : (
-                <button
+                <Button
                   onClick={() =>
                     setShowEditInput({
                       ...showEditInput,
@@ -109,15 +169,16 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
-                  style={{ padding: "5px 30px" }}
                 >
-                  Edit
-                </button>
+                  <EditIcon />
+                </Button>
               )}
-            </div>
+            </Flex>
 
-            <div className="edit-detail">
-              <p>NPI: {locationData?.resource?.npi}</p>
+            <Flex justifyContent={"space-between"} w={"100%"}>
+              <Text fontWeight={"bold"}>
+                NPI: {locationData?.resource?.npi}
+              </Text>
               {showEditInput.fieldName == "npi" ? (
                 <InlineEditInput
                   refetch={refetch}
@@ -125,7 +186,7 @@ const LocationDetailsCard = ({
                   id={locationId}
                 />
               ) : (
-                <button
+                <Button
                   onClick={() =>
                     setShowEditInput({
                       ...showEditInput,
@@ -133,15 +194,16 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
-                  style={{ padding: "5px 30px" }}
                 >
-                  Edit
-                </button>
+                  <EditIcon />
+                </Button>
               )}
-            </div>
+            </Flex>
 
-            <div className="edit-detail">
-              <p>Status: {locationData?.resource?.status}</p>
+            <Flex justifyContent={"space-between"} w={"100%"}>
+              <Text fontWeight={"bold"}>
+                Status: {locationData?.resource?.status}
+              </Text>
               {showEditInput.fieldName == "status" ? (
                 <InlineEditInput
                   refetch={refetch}
@@ -150,7 +212,7 @@ const LocationDetailsCard = ({
                   value={locationData?.resource?.status}
                 />
               ) : (
-                <button
+                <Button
                   onClick={() =>
                     setShowEditInput({
                       ...showEditInput,
@@ -158,15 +220,16 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
-                  style={{ padding: "5px 30px" }}
                 >
-                  Edit
-                </button>
+                  <EditIcon />
+                </Button>
               )}
-            </div>
+            </Flex>
 
-            <div className="edit-detail">
-              <p>TaxId: {locationData?.resource?.taxId}</p>
+            <Flex justifyContent={"space-between"} w={"100%"}>
+              <Text fontWeight={"bold"}>
+                TaxId: {locationData?.resource?.taxId}
+              </Text>
               {showEditInput.fieldName == "taxId" ? (
                 <InlineEditInput
                   refetch={refetch}
@@ -174,7 +237,7 @@ const LocationDetailsCard = ({
                   id={locationId}
                 />
               ) : (
-                <button
+                <Button
                   onClick={() =>
                     setShowEditInput({
                       ...showEditInput,
@@ -182,33 +245,28 @@ const LocationDetailsCard = ({
                       show: true,
                     })
                   }
-                  style={{ padding: "5px 30px" }}
                 >
-                  Edit
-                </button>
+                  <EditIcon />
+                </Button>
               )}
-            </div>
-          </div>
-          <button
-            style={{
-              width: "100%",
-              marginTop: "20px",
-              padding: "10px",
-              cursor: "pointer",
-            }}
-            onClick={() => setIsModalOpen(true)}
+            </Flex>
+          </Flex>
+          <Button
+            leftIcon={<EditIcon />}
+            colorScheme="messenger"
+            onClick={onOpen}
           >
             Edit Location
-          </button>
-        </>
+          </Button>
+        </Flex>
       )}
       <EditLocationModal
         data={locationData?.resource}
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+        isOpen={isOpen}
+        onClose={onClose}
         refetch={refetch}
       />
-    </div>
+    </Flex>
   );
 };
 

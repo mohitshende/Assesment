@@ -1,18 +1,28 @@
 import { useEffect, useState } from "react";
-import "../styles/Modal.css";
 import { useMutation, useQuery } from "@apollo/client";
 import { UPDATE_LOCATION } from "../GraphQL/Mutations";
 import { GET_LOCATIONS } from "../GraphQL/Queries";
+import {
+  Button,
+  Flex,
+  Input,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Select,
+  Text,
+} from "@chakra-ui/react";
 
 const EditLocationModal = ({
   data,
-  isModalOpen,
-  setIsModalOpen,
+  isOpen,
+  onClose,
   refetch,
 }: {
   data: any;
-  isModalOpen: boolean;
-  setIsModalOpen: (arg: boolean) => void;
+  isOpen: boolean;
+  onClose: () => void;
   refetch: () => void;
 }) => {
   const [payload, setPayload] = useState({
@@ -41,7 +51,7 @@ const EditLocationModal = ({
 
   useEffect(() => {
     if (updateData?.locationUpdate) {
-      setIsModalOpen(false);
+      onClose();
       refetchLocations();
       refetch();
     }
@@ -60,31 +70,23 @@ const EditLocationModal = ({
   }, [data]);
 
   return (
-    <div
-      className="modal"
-      style={{ display: isModalOpen ? "block" : "none" }}
-      onClick={(e) => {
-        e.stopPropagation();
-        setIsModalOpen(false);
-      }}
-    >
-      <div
-        className="modal-content"
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <div className="fields">
-          <h2>Edit new Location</h2>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalCloseButton />
+        <Flex direction={"column"} p={"30px"} gap={"20px"}>
+          <Text fontSize={"24px"} fontWeight={"bold"}>
+            Edit Location
+          </Text>
           {error?.message && <h5 style={{ color: "red" }}>Error!</h5>}
-          <input
+          <Input
             name="name"
             type="text"
             placeholder="Enter location name"
             onChange={handleChange}
             value={payload?.name}
           />
-          <input
+          <Input
             name="address"
             type="text"
             placeholder="Enter adress"
@@ -92,14 +94,14 @@ const EditLocationModal = ({
             value={payload?.address}
           />
 
-          <input
+          <Input
             name="npi"
             type="text"
             placeholder="Enter NPI"
             onChange={handleChange}
             value={payload?.npi}
           />
-          <input
+          <Input
             name="taxId"
             type="text"
             placeholder="Enter Tax ID"
@@ -107,7 +109,7 @@ const EditLocationModal = ({
             value={payload?.taxId}
           />
 
-          <select
+          <Select
             name="status"
             placeholder="Select Status"
             value={payload?.status}
@@ -115,8 +117,8 @@ const EditLocationModal = ({
           >
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
-          </select>
-          <button
+          </Select>
+          <Button
             onClick={() => {
               updateLocation({
                 variables: {
@@ -126,14 +128,13 @@ const EditLocationModal = ({
                 },
               });
             }}
-            disabled={loading}
-            style={{ padding: "5px 60px" }}
+            isLoading={loading}
           >
             Update
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </Flex>
+      </ModalContent>
+    </Modal>
   );
 };
 
